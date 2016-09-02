@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         webView.setWebViewClient(new InjectClient());
         webView.setWebChromeClient(new ChromeClient());
 
-        webView.loadUrl("http://apple.com");
+        webView.loadUrl("http://www.imdb.com/title/tt4302938/?ref_=inth_ov_i");
     }
 
     // Log javascript errors.
@@ -66,11 +66,12 @@ public class MainActivity extends AppCompatActivity {
 
     public class FathomObject {
         @JavascriptInterface
-        public void setTitle(final String title) {
+        public void handleParameters(final String jsonString) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(MainActivity.this, "Title: " + title, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "parameters returned", Toast.LENGTH_SHORT).show();
+                    Log.e("Main", "AOEU:" + jsonString);
                 }
             });
         }
