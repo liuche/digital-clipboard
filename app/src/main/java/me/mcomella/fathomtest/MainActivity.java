@@ -3,6 +3,7 @@ package me.mcomella.fathomtest;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.webkit.ConsoleMessage;
 import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
@@ -11,6 +12,8 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /*
  * Access a fathom context using a visible WebView.
@@ -19,6 +22,8 @@ import android.widget.Toast;
  * practices, such as potential memory leaks.
  */
 public class MainActivity extends AppCompatActivity {
+    private final String LOGTAG = "MainActivity";
+    private final boolean DEBUG = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         final WebView webView = (WebView) findViewById(R.id.webview);
+        webView.setVisibility(View.INVISIBLE);
         final WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         webView.addJavascriptInterface(new FathomObject(), "java");
@@ -33,15 +39,16 @@ public class MainActivity extends AppCompatActivity {
         webView.setWebViewClient(new InjectClient());
         webView.setWebChromeClient(new ChromeClient());
 
-        webView.loadUrl("http://www.imdb.com/title/tt4302938/?ref_=inth_ov_i");
+        // Test site: Rotten Tomatoes: Kubo
+        webView.loadUrl("https://www.rottentomatoes.com/m/kubo_and_the_two_strings_2016/");
     }
 
     // Log javascript errors.
     public class ChromeClient extends WebChromeClient {
         @Override
         public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
-            Log.d("lol", consoleMessage.messageLevel() + "> " + consoleMessage.sourceId() + ":" + consoleMessage.lineNumber() + ": " + consoleMessage.message());
-            if (consoleMessage.messageLevel() == ConsoleMessage.MessageLevel.ERROR) {
+            Log.d(LOGTAG, consoleMessage.messageLevel() + "> " + consoleMessage.sourceId() + ":" + consoleMessage.lineNumber() + ": " + consoleMessage.message());
+            if (DEBUG && consoleMessage.messageLevel() == ConsoleMessage.MessageLevel.ERROR) {
                 Toast.makeText(MainActivity.this, "console: " + consoleMessage.message(), Toast.LENGTH_SHORT).show();
             }
             return super.onConsoleMessage(consoleMessage);
@@ -52,13 +59,12 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
-
             final String script = Util.getStringFromResources(view.getContext(), R.raw.extract);
 
             view.evaluateJavascript(script, new ValueCallback<String>() {
                 @Override
                 public void onReceiveValue(String s) {
-                    Log.d("lol", "finished: " + s);
+                    Log.d(LOGTAG, "Script completed: " + s);
                 }
             });
         }
@@ -71,7 +77,12 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     Toast.makeText(MainActivity.this, "parameters returned", Toast.LENGTH_SHORT).show();
-                    Log.e("Main", "AOEU:" + jsonString);
+                    try {
+                        final JSONObject jsonObj = new JSONObject(jsonString);
+                        Log.e(LOGTAG, "Fathom object: " + jsonString);
+                    } catch (JSONException e) {
+                        Log.e(LOGTAG, "Problem parsing JSON string from JS script into JSONObject ", e);
+                    }
                 }
             });
         }

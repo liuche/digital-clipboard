@@ -4,6 +4,7 @@ const {dom, flavor, rule, ruleset} = require('fathom-web');
  * We're looking for Title, Synopsis, Poster Art, Ratings, and Source.
  */
 // For a v1, we're only looking at IMDb. These rules will need to be generalized when we add other sites.
+
 var rules = {
   title: ruleset(
     // Give any OpenGraph meta tag a score of 2, and tag it as title-ish as well:
@@ -14,31 +15,30 @@ var rules = {
     rule(dom('title'),
       node => [{score: 1, flavor: 'titley', notes: node.element.text }])
   ),
-
   description: ruleset(
-    rule(dom('meta[name="description"]'),
-      node => [{score: 1, flavor: 'descriptiony', notes: node.element.content }])
+    rule(dom('div[id="movieSynopsis"]'),
+      node => [{score: 1, flavor: 'descriptiony', notes: node.element.textContent }])
   ),
 
   rating: ruleset(
-    rule(dom('span[itemprop="ratingValue"]'),
+    rule(dom('span[class="meter-value superPageFontColor"]'),
       node => [{score: 1, flavor: 'ratingy', notes: node.element.textContent }])
   ),
 
   poster: ruleset(
-    rule(dom('td[id="img_primary"]'),
-      node => [{score: 1, flavor: 'postery', notes: node.element.getElementsByTagName('img')[0].src }])
+    rule(dom('img[class="posterImage"]'),
+      node => [{score: 1, flavor: 'postery', notes: node.element.src }])
   ),
 
   site: ruleset(
-    rule(dom('meta[property="og:site_name"]'),
-      node => [{score: 1, flavor: 'sitey', notes: node.element.content }])
+    rule(dom('title'),
+      node => [{score: 1, flavor: 'sitey', notes: "Rotten Tomatoes" }])
+      // Rotten tomatoes doesn't have a title, so we'll hard code it for now.
   )
 };
 
 var res = {};
 for (var flavor_property in rules) {
-
   try {
     var flavor_type = flavor_property + 'y';
     var node = rules[flavor_property].score(document).max(flavor_type);
@@ -49,4 +49,4 @@ for (var flavor_property in rules) {
   }
 }
 
-java.handleParameters(res);
+java.handleParameters(JSON.stringify(res));
