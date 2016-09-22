@@ -1,4 +1,4 @@
-package me.mcomella.fathomtest;
+package me.mcomella.fathomtest.interfaces;
 
 import android.support.v4.app.Fragment;
 

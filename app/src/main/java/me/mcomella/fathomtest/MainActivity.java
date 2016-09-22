@@ -7,10 +7,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewParent;
 import android.webkit.ConsoleMessage;
 import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
@@ -22,13 +20,16 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import me.mcomella.fathomtest.interfaces.ClipboardFragment;
+import me.mcomella.fathomtest.interfaces.PageExtractorHelper;
+
 /*
  * Access a fathom context using a visible WebView.
  *
  * This is an experiment to see if it can work so there are a lot of bad
  * practices, such as potential memory leaks.
  */
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity implements PageExtractorHelper {
     private final String LOGTAG = "MainActivity";
     private final boolean DEBUG = false;
     private WebView webView;
@@ -47,7 +48,7 @@ public class MainActivity extends FragmentActivity {
         viewPager.setAdapter(new ClipboardPagerAdapter(getSupportFragmentManager()));
 
         // Test site: Rotten Tomatoes: Kubo
-        webView.loadUrl("https://www.rottentomatoes.com/m/kubo_and_the_two_strings_2016/");
+//        webView.loadUrl("https://www.rottentomatoes.com/m/kubo_and_the_two_strings_2016/");
     }
 
     private void setupWebView() {
@@ -61,7 +62,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     private class ClipboardPagerAdapter extends FragmentStatePagerAdapter {
-        private final ClipboardFragment[] fragments = new ClipboardFragment[] { new AdderFragment() };
+        private final ClipboardFragment[] fragments = new ClipboardFragment[] { new AdderFragment(), new SavedItemsFragment() };
 
         public ClipboardPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -83,12 +84,17 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+    @Override
+    public void fetchUrl(String url) {
+        webView.loadUrl(url);
+    }
+
     // Log javascript errors.
     public class ChromeClient extends WebChromeClient {
         @Override
         public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
-            Log.d(LOGTAG, consoleMessage.messageLevel() + "> " + consoleMessage.sourceId() + ":" + consoleMessage.lineNumber() + ": " + consoleMessage.message());
             if (DEBUG && consoleMessage.messageLevel() == ConsoleMessage.MessageLevel.ERROR) {
+                Log.d(LOGTAG, consoleMessage.messageLevel() + "> " + consoleMessage.sourceId() + ":" + consoleMessage.lineNumber() + ": " + consoleMessage.message());
                 Toast.makeText(MainActivity.this, "console: " + consoleMessage.message(), Toast.LENGTH_SHORT).show();
             }
             return super.onConsoleMessage(consoleMessage);
@@ -113,16 +119,18 @@ public class MainActivity extends FragmentActivity {
     public class FathomObject {
         @JavascriptInterface
         public void handleParameters(final String jsonString) {
+            try {
+                final JSONObject jsonObj = new JSONObject(jsonString);
+                // XXX: Hardcode getting the "saved" fragment.
+                SavedItemsFragment savedFragment = (SavedItemsFragment) getSupportFragmentManager().getFragments().get(1);
+                savedFragment.handlePageData(jsonObj);
+            } catch (JSONException e) {
+                Log.e(LOGTAG, "Problem parsing JSON string from JS script into JSONObject ", e);
+            }
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(MainActivity.this, "parameters returned", Toast.LENGTH_SHORT).show();
-                    try {
-                        final JSONObject jsonObj = new JSONObject(jsonString);
-                        Log.e(LOGTAG, "Fathom object: " + jsonString);
-                    } catch (JSONException e) {
-                        Log.e(LOGTAG, "Problem parsing JSON string from JS script into JSONObject ", e);
-                    }
+                    Toast.makeText(MainActivity.this, "parameters returned!", Toast.LENGTH_LONG).show();
                 }
             });
         }
