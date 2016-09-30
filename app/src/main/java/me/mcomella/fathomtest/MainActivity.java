@@ -17,8 +17,6 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import me.mcomella.fathomtest.interfaces.ClipboardFragment;
 import me.mcomella.fathomtest.interfaces.PageExtractorHelper;
@@ -32,6 +30,9 @@ import me.mcomella.fathomtest.interfaces.PageExtractorHelper;
 public class MainActivity extends FragmentActivity implements PageExtractorHelper {
     private final String LOGTAG = "MainActivity";
     private final boolean DEBUG = false;
+
+    public static final String PREF_CLIPPINGS = "pref_clippings";
+
     private WebView webView;
     private ViewPager viewPager;
     private PagerAdapter pagerAdapter;
@@ -119,14 +120,10 @@ public class MainActivity extends FragmentActivity implements PageExtractorHelpe
     public class FathomObject {
         @JavascriptInterface
         public void handleParameters(final String jsonString) {
-            try {
-                final JSONObject jsonObj = new JSONObject(jsonString);
-                // XXX: Hardcode getting the "saved" fragment.
-                SavedItemsFragment savedFragment = (SavedItemsFragment) getSupportFragmentManager().getFragments().get(1);
-                savedFragment.handlePageData(jsonObj);
-            } catch (JSONException e) {
-                Log.e(LOGTAG, "Problem parsing JSON string from JS script into JSONObject ", e);
-            }
+            // XXX: Hardcode getting the "saved" fragment.
+            SavedItemsFragment savedFragment = (SavedItemsFragment) getSupportFragmentManager().getFragments().get(1);
+            savedFragment.handlePageData(jsonString);
+
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

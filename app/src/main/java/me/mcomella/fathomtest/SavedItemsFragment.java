@@ -1,5 +1,7 @@
 package me.mcomella.fathomtest;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -7,12 +9,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 
-import org.json.JSONObject;
-
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import me.mcomella.fathomtest.interfaces.ClipboardFragment;
 
@@ -39,8 +40,11 @@ public class SavedItemsFragment extends ClipboardFragment {
         return rootView;
     }
 
-    public void handlePageData(JSONObject pageJSONObject) {
-        // TODO: Add content to UI.
+    public void handlePageData(String pageJSONString) {
+        final SharedPreferences sharedPrefs = getContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
+        Set<String> clippingsSet = sharedPrefs.getStringSet(MainActivity.PREF_CLIPPINGS, new HashSet<String>());
+        clippingsSet.add(pageJSONString);
+        sharedPrefs.edit().putStringSet(MainActivity.PREF_CLIPPINGS, clippingsSet);
     }
 
     @Override
