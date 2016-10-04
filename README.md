@@ -1,6 +1,8 @@
 # CLPY app
 
-A clipboard for handling links from the web. 
+A clipboard for handling links from the web.
+
+<img src="media/clpy-screenshot.png?raw=true" height="400">
 
 ## V1
 
