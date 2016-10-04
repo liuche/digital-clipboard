@@ -1,5 +1,6 @@
 package me.mcomella.fathomtest;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -18,8 +19,13 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import me.mcomella.fathomtest.interfaces.ClipboardFragment;
 import me.mcomella.fathomtest.interfaces.PageExtractorHelper;
+
+import static java.security.AccessController.getContext;
 
 /*
  * Access a fathom context using a visible WebView.
@@ -42,14 +48,14 @@ public class MainActivity extends FragmentActivity implements PageExtractorHelpe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // XXX Clear the saved clippings each time.
+        getSharedPreferences("prefs", Context.MODE_PRIVATE).edit().putStringSet(PREF_CLIPPINGS, new HashSet<String>()).commit();
+
         webView = (WebView) findViewById(R.id.webview);
         setupWebView();
 
         viewPager = (ViewPager) findViewById(R.id.pager);
         viewPager.setAdapter(new ClipboardPagerAdapter(getSupportFragmentManager()));
-
-        // Test site: Rotten Tomatoes: Kubo
-//        webView.loadUrl("https://www.rottentomatoes.com/m/kubo_and_the_two_strings_2016/");
     }
 
     private void setupWebView() {
@@ -96,7 +102,7 @@ public class MainActivity extends FragmentActivity implements PageExtractorHelpe
         public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
             if (DEBUG && consoleMessage.messageLevel() == ConsoleMessage.MessageLevel.ERROR) {
                 Log.d(LOGTAG, consoleMessage.messageLevel() + "> " + consoleMessage.sourceId() + ":" + consoleMessage.lineNumber() + ": " + consoleMessage.message());
-                Toast.makeText(MainActivity.this, "console: " + consoleMessage.message(), Toast.LENGTH_SHORT).show();
+            //    Toast.makeText(MainActivity.this, "console: " + consoleMessage.message(), Toast.LENGTH_SHORT).show();
             }
             return super.onConsoleMessage(consoleMessage);
         }
@@ -132,4 +138,6 @@ public class MainActivity extends FragmentActivity implements PageExtractorHelpe
             });
         }
     }
+
+
 }

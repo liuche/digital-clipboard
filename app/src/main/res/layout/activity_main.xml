@@ -8,6 +8,7 @@
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
         android:paddingBottom="@dimen/activity_vertical_margin"
+        android:background="#e8eaed"
         tools:context="me.mcomella.fathomtest.MainActivity">
 
     <android.support.v4.view.ViewPager
@@ -17,7 +18,8 @@
 
         <android.support.v4.view.PagerTitleStrip
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:textSize="18sp"/>
 
     </android.support.v4.view.ViewPager>
 
