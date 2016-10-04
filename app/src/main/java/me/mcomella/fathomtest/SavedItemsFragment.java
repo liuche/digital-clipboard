@@ -42,6 +42,8 @@ public class SavedItemsFragment extends ClipboardFragment {
         recyclerView.setAdapter(itemAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        loadClippings();
+
         return rootView;
     }
 
@@ -55,7 +57,12 @@ public class SavedItemsFragment extends ClipboardFragment {
                 Log.e(LOGTAG, "Error parsing JSON from saved clipping", e);
             }
         }
-        itemAdapter.notifyDataSetChanged();
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                itemAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     public void handlePageData(String pageJSONString) {

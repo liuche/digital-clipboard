@@ -8,7 +8,7 @@
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="15dp"
+        android:layout_margin="5dp"
         card_view:cardCornerRadius="2dp"
         card_view:cardElevation="10dp">
 
@@ -16,48 +16,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="5dp"
-                android:paddingLeft="15dp"
-                android:layout_alignParentLeft="true"
-                android:layout_toLeftOf="@+id/centerline"
-                android:textColor="@android:color/black"
-                android:textSize="24sp" />
-
-            <TextView
-                android:id="@+id/rating"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="15dp"
-                android:layout_alignParentLeft="true"
-                android:layout_below="@id/title"
-                android:layout_toLeftOf="@id/centerline" />
-
-            <TextView
-                android:id="@+id/description"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:paddingLeft="15dp"
-                android:layout_alignParentLeft="true"
-                android:layout_below="@id/rating"
-                android:layout_toLeftOf="@id/centerline" />
-
             <ImageView
-                android:id="@id/centerline"
+                android:id="@+id/centerline"
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:layout_centerHorizontal="true"
                 android:visibility="invisible" />
 
             <ImageView
-                android:id="@id/image"
+                android:id="@+id/image"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignBottom="@id/description"
+                android:layout_height="250dp"
                 android:layout_alignParentRight="true"
                 android:layout_toRightOf="@id/centerline" />
 
@@ -69,11 +38,59 @@
                 android:src="@android:color/darker_gray" />
 
             <TextView
-                android:id="@+id/site"
-                android:layout_width="wrap_content"
+                android:id="@+id/title"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:paddingRight="5dp"
+                android:paddingLeft="15dp"
                 android:layout_alignParentLeft="true"
-                android:layout_below="@id/bottomline" />
+                android:layout_toLeftOf="@id/centerline"
+                android:textColor="@android:color/black"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/rating"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:paddingLeft="15dp"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/title"
+                android:layout_toLeftOf="@id/centerline"/>
+
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:paddingLeft="15dp"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/rating"
+                android:layout_above="@id/bottomline"
+                android:layout_toLeftOf="@id/centerline" />
+
+            <TextView
+                android:id="@+id/timestamp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="15dp"
+                android:paddingTop="10dp"
+                android:textSize="11sp"
+                android:text="Added just now"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/bottomline"/>
+
+            <TextView
+                android:id="@+id/site"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="15dp"
+                android:paddingBottom="10dp"
+                android:textSize="11sp"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/timestamp" />
+
         </RelativeLayout>
     </android.support.v7.widget.CardView>
 </LinearLayout>

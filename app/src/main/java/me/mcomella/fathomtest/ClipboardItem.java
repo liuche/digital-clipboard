@@ -14,7 +14,7 @@ public class ClipboardItem {
     public ClipboardItem(JSONObject jsonObject) {
         // XXX Use optString right now so we don't have to try/catch/reassign.
         title = jsonObject.optString("title");
-        description = jsonObject.optString("description");
+        description = jsonObject.optString("description").substring(0, 250) + "...";
         rating = jsonObject.optString("rating");
         imageUrl = jsonObject.optString("poster");
         site = jsonObject.optString("site");
